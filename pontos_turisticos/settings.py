@@ -9,24 +9,24 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from decouple import config
+from dj_database_url import parse as dburl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '5o1$@7y1f8dx7oiv-fy_0y$eezoeiss@-o7&q$x8u82erz@o+)'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1:8000', '127.0.0.1', 'localhost:8000', 'localhost', 'apppontosturisticos.herokuapp.com']
 
 # Application definition
 
@@ -78,30 +78,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pontos_turisticos.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
+default_dburl = 'postgres://postgres:docker@localhost:5432/pontos_turisticos'
 
-    'default': {
-
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': 'pontos_turisticos',
-
-        'USER': 'postgres',
-
-        'PASSWORD': 'docker',
-
-        'HOST': 'localhost',
-
-        'PORT': '5432',
-
-    }
-
-}
-
+DATABASES = {'default': config('DATABASE_URL', default=default_dburl, cast=dburl), }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -120,8 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -142,3 +122,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = 'imagens'
 MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
